@@ -16,7 +16,7 @@ public abstract class BasePage {
     }
 
 
-    protected WebDriverWait waitFor() {
+    protected static WebDriverWait waitFor() {
         return new WebDriverWait(driver, 3);
     }
 
@@ -54,7 +54,7 @@ public abstract class BasePage {
                 .until(ExpectedConditions.visibilityOf(driver.findElement(elementPath)));
     }
 
-    protected void waitUtilTableVisible(By tablePath) {
+    protected static void waitUtilTableVisible(By tablePath) {
         waitFor().until(ExpectedConditions.presenceOfAllElementsLocatedBy(tablePath));
     }
     protected void waitUntilClickable(String elementName, By elementPath) {

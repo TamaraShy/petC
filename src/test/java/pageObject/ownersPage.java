@@ -33,7 +33,7 @@ public class ownersPage extends BasePage{
         return Owners;
     }
 
-    public static ArrayList<Owner> getOwnersList() {
+    public ArrayList<Owner> getOwnersList() {
         ArrayList<Owner> owners = new ArrayList<>();
         WebElement ownersTable = driver.findElement(By.xpath("//*[@class='table-responsive']"));
         waitUtilTableVisible(ownersTablePath);
