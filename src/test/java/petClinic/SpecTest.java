@@ -1,19 +1,26 @@
-package petClinic;
-
+import com.petC.pageobject.SpecialtiesPage;
+import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pageObject.SpecPage;
+import petClinic.Spec;
 
 import static org.testng.Assert.assertFalse;
-import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.Assert.assertTrue;
 
-public class SpecTest extends TestBase {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    Spec specialties;
-    SpecPage specialtiesPage;
+@Feature("Speciality")
+public class NewSpecialityTest extends TestBase {
+
+    private String specialityInput = "Dentist";
+    Specialties specialties;
+    SpecialtiesPage specialtiesPage;
 
 
     @BeforeClass
+    @Step("Open Speciality page")
     public void beforeClass() {
         specialties = new Spec();
         specialtiesPage = new SpecPage(driver);
@@ -23,15 +30,29 @@ public class SpecTest extends TestBase {
 
 
     @Test
-    public void verifyAddNewSpecialist()    {
-        specialtiesPage.addSpeciality("Teacher");
+    @Severity(SeverityLevel.CRITICAL)
+    @Step("Add Speciality = {specialityInput}")
+    public void verifyAddNewSpecialist() {
+        specialtiesPage.addSpeciality(specialityInput);
 
+        assertFalse(specialtiesPage.verifySaveBtnIsDisabled());
+        assertThat(specialtiesPage.getSpecTypeList()).contains(specialityInput);
+    }
+
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Validation fields upon Creation")
+    public void verifySpecialisttNameIsRequired() {
+        specialtiesPage.ifButtonDisabledPressAdd();
+        specialtiesPage.addSpeciality("");
         assertFalse(specialtiesPage.verifySaveBtnIsDisabled());
     }
 
     @Test
-    public void verifySpecNameIsRequired()    {
-        specialtiesPage.addSpeciality("");
-        assertTrue(specialtiesPage.verifySaveBtnIsDisabled());
+    @Severity(SeverityLevel.NORMAL)
+    @Step ("Verify that Speciality {specialityInput} is deleted")
+    public void specialityDeletePetByName() {
+        specialtiesPage.pressDeleteSpecialialities(specialityInput);
+        assertFalse(specialtiesPage.getSpecTypeList().contains(specialityInput));
     }
 }

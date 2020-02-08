@@ -1,86 +1,108 @@
-package petClinic;
-
+import com.petC.pageobject.OwnersPage;
+import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import pageObject.NewOwnersPage;
-import pageObject.ownersPage;
+import petClinic.Owners;
+import petClinic.TestBase;
 
-import java.security.acl.Owner;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 
-//public class OwnerTest extends TestBase {
+@Feature("Owner")
 
-  //  ownersPage ownerPage;
-    //Owners owner;
-    //NewOwnersPage newOwnerPage;
-    //String firstName = "First name";
-    //String lastName = "Last name";
-    //String telephone = "Phone number";
-    //String isRequired = " is required";
-    //String isMoreThan = " must be more than 2 characters";
-    //String isDigitsOnly = "digits only";
-
-    //@BeforeClass
-    //public void beforeClass() {
-      //  owner = new Owners();
-        //ownerPage = new ownersPage (driver);
-        //ownersPage.openPage();
-        //newOwnerPage = ownersPage.clickAddOwnerBtn();
-    //}
-
-    //@Test
-    //public void addNewOwnerTest() {
-      //  owner.setFirstName("Shadow");
-        //owner.setLastName("Moon");
-        //owner.setAddress("Unknown");
-        //owner.setCity("Unknown");
-        //owner.setTelephone("11111111");
+public class NewOwnersTest extends TestBase {
+    pageObject.ownersPage ownersPage;
+    Owners owner;
+    NewOwnersPage newOwnerPage;
+    String firstName = "First name";
+    String lastName = "Last name";
+    String telephone = "Phone number";
+    String isRequired = " is required";
+    String isMoreThan = " must be at least 2 characters long";
+    String isDigitsOnly = " only accept digits";
 
 
-       // newOwnerPage.fillOwner(owner);
-        //ownerPage = newOwnerPage.clickAddOwnerButton();
+    @BeforeClass
+    @Step("Open 'Add new owner' page")
+    public void beforeClass() {
+        owner = new Owner();
+        ownersPage = new OwnersPage(driver);
+        ownersPage.openPage();
+        newOwnerPage = ownersPage.clickAddOwnerBtn();
+    }
 
-        //ArrayList<Owner> ownersNames = ownersPage.getOwnersList();
-        //assertThat(ownersNames).contains(owner);
+    @Test
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Add new Owner")
+    public void addNewOwnerTest() {
+        owner.setFirstName("Simple");
+        owner.setLastName("User");
+        owner.setAddress("Main Street");
+        owner.setCity("Dnipro");
+        owner.setTelephone("05075869");
 
-   // private Collection<Object> assertThat(ArrayList<Owner> ownersNames) {
-    //}
 
-    //@Test
-    //public void VerifyFirstNameLength() {
-      //  newOwnerPage.setFirstName("1");
-        //assertThat(newOwnerPage.errorMessage(firstName + isMoreThan).isDisplayed());
-    //}
+        newOwnerPage.fillOwner(owner);
+        ownersPage = newOwnerPage.clickAddOwnerButton();
 
-    //@Test
-    //public void VerifyLastNameLength() {
-      //  newOwnerPage.setLastName("1");
-        //assertThat(newOwnerPage.errorMessage(lastName + isMoreThan).isDisplayed());
-   // }
+        goToOwnersPage();
+        ownersPage.verifyOwnersListContainsNewlyAdded(owner);
+    }
 
-    //@Test
-    //public void VerifyPhone() {
-      //  newOwnerPage.setTelephone("lsjfljlfjslfj");
-        //assertThat(newOwnerPage.errorMessage(telephone + isDigitsOnly).isDisplayed());
-    //}
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Validation fields upon Creation")
+    @Step("Verify 'First name' should be {isMoreThan}")
+    public void verifyFirstNameLength() {
+        goToNewOwnerPage();
+        newOwnerPage.setFirstName("1");
+        assertThat(newOwnerPage.errorMessage(firstName + isMoreThan).isDisplayed()).isTrue();
+    }
 
-    //@Test
-    //public void VerifyFirstNameRequired() {
-      //  newOwnerPage.clearField("firstName");
-        //assertThat(newOwnerPage.errorMessage(firstName + isRequired).isDisplayed());
-    //}
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Validation fields upon Creation")
+    @Step("Verify 'Last name' should be {isMoreThan}")
+    public void verifyLastNameLength() {
+        newOwnerPage.setLastName("1");
+        assertThat(newOwnerPage.errorMessage(lastName + isMoreThan).isDisplayed()).isTrue();
+    }
 
-    //@Test
-    //public void VerifyLastNameRequired() {
-      //  newOwnerPage.clearField("Last name");
-        //assertThat(newOwnerPage.errorMessage(lastName + isRequired).isDisplayed());
-   // }
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Validation fields upon Creation")
+    @Step("Verify 'Phone' should be {isDigitsOnly}")
+    public void verifyPhone() {
+        newOwnerPage.setTelephone("1wqewq");
+        assertThat(newOwnerPage.errorMessage(telephone + isDigitsOnly).isDisplayed()).isTrue();
+    }
 
-    //@Test
-    //public void VerifyPhoneRequired() {
-      //  newOwnerPage.clearField("Phone");
-        //assertThat(newOwnerPage.errorMessage(telephone + isRequired).isDisplayed());
-    //}
-//}
+
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Validation fields upon Creation")
+    @Step("Verify 'First name' is required field")
+    public void verifyFirstNameRequired() {
+        newOwnerPage.clearField("firstName");
+        assertThat(newOwnerPage.errorMessage(firstName + isRequired).isDisplayed()).isTrue();
+    }
+
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Validation fields upon Creation")
+    @Step("Verify 'Last name' is required field")
+    public void verifyLastNameRequired() {
+        newOwnerPage.clearField("Last name");
+        assertThat(newOwnerPage.errorMessage(lastName + isRequired).isDisplayed()).isTrue();
+    }
+
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Validation fields upon Creation")
+    @Step("Verify 'Phone' is required field")
+    public void verifyPhoneRequired() {
+        newOwnerPage.clearField("Phone");
+        assertThat(newOwnerPage.errorMessage(telephone + isRequired).isDisplayed()).isTrue();
+    }
+
+}
